@@ -1,0 +1,121 @@
+{
+  "variables": {
+    "iso_url": "http://mirrors.kernel.org/centos/7.2.1511/isos/x86_64/CentOS-7-x86_64-DVD-1511.iso",
+    "iso_checksum": "907e5755f824c5848b9c8efbb484f3cd945e93faa024bad6ba875226f9683b16",
+    "iso_checksum_type": "sha256",
+
+    "packer_virt_sysprep_dir": "/packer-virt-sysprep",
+
+    "sysprep_op_bash_history": "true",
+    "sysprep_op_crash_data":   "true",
+    "sysprep_op_dhcp_client_state": "true",
+    "sysprep_op_firewall_rules": "true",
+    "sysprep_op_logfiles": "true",
+    "sysprep_op_machine_id": "true",
+    "sysprep_op_mail_spool": "true",
+    "sysprep_op_package_manager_cache": "true",
+    "sysprep_op_rpm_db": "true",
+    "sysprep_op_ssh_hostkeys": "true",
+    "sysprep_op_tmp_files": "true",
+    "sysprep_op_yum_uuid": "true"
+  },
+
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "http_directory": "http",
+      "communicator": "ssh",
+      "headless": false,
+
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+
+      "boot_command": [
+        "<tab> <wait>",
+        "text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg <wait>",
+        "<enter> <wait>"
+      ],
+      "boot_wait": "5s",
+
+      "guest_os_type": "RedHat_64",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "1024"],
+        ["modifyvm", "{{.Name}}", "--cpus", "1"],
+        ["setextradata", "global", "GUI/SuppressMessages", "all"]
+      ],
+      "hard_drive_interface": "sata",
+      "disk_size": "10240",
+
+      "ssh_username": "root",
+      "ssh_private_key_file": "vagrant_insecure.id_rsa",
+
+      "shutdown_command": "/sbin/poweroff"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} $(command -v bash) '{{.Path }}'",
+      "scripts": [
+        "scripts/01-create-vagrant-user.sh",
+        "scripts/02-configure-sudoers.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} $(command -v bash) '{{.Path }}'",
+      "environment_vars": [
+        "PACKER_VIRT_SYSPREP_DIR={{user `packer_virt_sysprep_dir`}}"
+      ],
+      "inline": [
+        "mkdir $PACKER_VIRT_SYSPREP_DIR"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "scripts/packer-virt-sysprep/",
+      "destination": "{{user `packer_virt_sysprep_dir`}}"
+    },
+    {
+      "type": "shell",
+      "remote_folder": "{{user `packer_virt_sysprep_dir`}}",
+      "environment_vars": [
+        "PACKER_VIRT_SYSPREP_DIR={{user `packer_virt_sysprep_dir`}}",
+        "SYSPREP_OP_BASH_HISTORY={{user `sysprep_op_bash_history`}}",
+        "SYSPREP_OP_CRASH_DATA={{user `sysprep_op_crash_data`}}",
+        "SYSPREP_OP_DHCP_CLIENT_STATE={{user `sysprep_op_dhcp_client_state`}}",
+        "SYSPREP_OP_FIREWALL_RULES={{user `sysprep_op_firewall_rules`}}",
+        "SYSPREP_OP_LOGFILES={{user `sysprep_op_logfiles`}}",
+        "SYSPREP_OP_MACHINE_ID={{user `sysprep_op_machine_id`}}",
+        "SYSPREP_OP_MAIL_SPOOL={{user `sysprep_op_mail_spool`}}",
+        "SYSPREP_OP_PACKAGE_MANAGER_CACHE={{user `sysprep_op_package_manager_cache`}}",
+        "SYSPREP_OP_RPM_DB={{user `sysprep_op_rpm_db`}}",
+        "SYSPREP_OP_SSH_HOSTKEYS={{user `sysprep_op_ssh_hostkeys`}}",
+        "SYSPREP_OP_TMP_FILES={{user `sysprep_op_tmp_files`}}",
+        "SYSPREP_OP_YUM_UUID={{user `sysprep_op_yum_uuid`}}"
+      ],
+      "execute_command": "{{ .Vars }} $(command -v bash) '{{.Path }}'",
+      "script": "scripts/99-packer-virt-sysprep-control-script.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "{{ .Vars }} $(command -v bash) '{{.Path }}'",
+      "environment_vars": [
+        "PACKER_VIRT_SYSPREP_DIR={{user `packer_virt_sysprep_dir`}}"
+      ],
+      "inline": [
+        "rm -rf $PACKER_VIRT_SYSPREP_DIR"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "vagrantfile_template": "files/Vagrantfile.virtualbox",
+      "output": "boxes/centos72-{{.Provider}}.box"
+    }
+  ]
+}

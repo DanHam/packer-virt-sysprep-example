@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = 'centos-7.2-x86_64'
+
+  # Virtualbox provider specific options
+  config.vm.provider 'virtualbox' do |vb|
+    # Disable audio due to Virtualbox issue #15659
+    vb.customize ['modifyvm', :id, '--audio', 'none']
+    # Explicity set to have the cable connected for the network interface
+    # This is a workaround for Vagrant issue #7648
+    vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
+  end
+end
