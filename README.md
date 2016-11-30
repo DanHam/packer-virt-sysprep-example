@@ -78,8 +78,9 @@ the configured options worked correctly.
 The scripts provided have been tested on CentOS 6.x and 7.x and Debian
 8.x. While not tested, the scripts or 'operations' *should* also work on
 Red Hat 6 and 7 without issue.
-However, the software is provided *as is* and you should **test
-thoroughly** to ensure the results of running the scripts are as expected!
+However, the software is provided *as is* and you should
+**[test thoroughly](https://github.com/DanHam/packer-virt-sysprep-example#testing)**
+to ensure the results of running the scripts are as expected!
 In other words, there is no implied warranty of any kind!!
 
 Usage on any other OS, such as SUSE or Ubuntu, *may* work but will require
