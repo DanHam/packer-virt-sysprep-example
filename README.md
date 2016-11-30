@@ -128,8 +128,8 @@ that all packer-virt-sysprep scripts expect to be run within a Bash shell!
       "type": "shell"
       "execute_command": "{{ .Vars }} $(command -v bash) '{{ .Path }}'",
       "scripts": [
-        "sysprep-op-machine-id.sh",
-        "sysprep-op-ssh-hostkeys.sh"
+        "scripts/packer-virt-sysprep/sysprep-op-machine-id.sh",
+        "scripts/packer-virt-sysprep/sysprep-op-ssh-hostkeys.sh"
       ]
     }
   ]
