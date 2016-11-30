@@ -13,6 +13,7 @@ It should be fairly easy to cherry pick the bits of config required to use
 the Packer-Virt-Sysprep operations within your own builds.
 Alternatively, you can use the templates and files included here as a
 starting point and go from there.
+
 ---
 
 ## Operations
@@ -270,7 +271,7 @@ The [remote_folder](https://www.packer.io/docs/provisioners/shell.html#remote_fo
 stanza is important. This is where the control script will be uploaded to
 and executed from. Using the custom directory we specified earlier keeps
 the control script out of the way - saving it from potentially being
-obliterated by the ```sysprep-op-tmp-files.sh``` script.
+obliterated by the ```sysprep-op-tmp-files``` operation.
 
 All of the user variables are referenced and exported as environment
 variables of the same name in the ```environment_vars``` section. All of
@@ -414,7 +415,7 @@ first need to convert the exported vmdk file into a format that Guestfish
 can understand. To reduce the size of the exported image, Virtualbox
 exports the machines hard disk in a compressed format that Guestfish
 cannot work with. Thankfully, the ```VBoxManage``` tool provides a way to
-convert the disk file so that we can work with it.
+convert the disk file so that we *can* work with it.
 
 ```
 $ cd output-virtualbox-iso
