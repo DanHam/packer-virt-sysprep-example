@@ -422,6 +422,17 @@ exports the machines hard disk in a compressed format that Guestfish
 cannot work with. Thankfully, the ```VBoxManage``` tool provides a way to
 convert the disk file so that we *can* work with it.
 
+If you've not created the box yet, now is the time to do so
+
+```
+$ packer build centos.json
+```
+
+Once the process is complete you should have a Virtualbox VM in OVF format
+under the ```output-virtualbox-iso``` directory. The VM is comprised of
+two files - the OVF file itseld and the virtual hard disk or vmdk file.
+We need to convert the vmdk file:
+
 ```
 $ cd output-virtualbox-iso
 $ VBoxManage clonehd \
