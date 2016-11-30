@@ -150,7 +150,7 @@ rearrange the template.
 
 Be warned that by default Packer will use ```/tmp``` as the directory to
 which provisioning scripts are uploaded to and subsequently executed from.
-Since the ```sysprep-op-tmp-files.sh``` operation aims to delete all files
+Since the ```sysprep-op-tmp-files``` operation aims to delete all files
 under ```tmp```, it's probably **not** a good idea to have Packer use
 ```/tmp``` when running the packer-virt-sysprep operation scripts!
 Thankfully, Packer provides a mechanism for customising which directory
@@ -188,22 +188,24 @@ These
 are referenced in the
 [environment variables](https://www.packer.io/docs/provisioners/shell.html#environment_vars)
 section of the [remote shell provisioner](https://www.packer.io/docs/provisioners/shell.html).
-The ```sysprep_op_*``` variables provide the means by which the master
+- The ```sysprep_op_*``` variables provide the means by which the master
 control script decides which operations should be executed and which
 operations will be skipped.
-The ```packer_virt_sysprep_dir``` variable is used to specify the
+- The ```packer_virt_sysprep_dir``` variable is used to specify the
 directory within the guest to which the packer-virt-sysprep scripts will
 be uploaded. It is also the directory the control script is uploaded to
 and then executed from.
+
+---
 
 The ```builders``` section of the template is fairly standard. There's
 nothing of particular relevance here with regard to the use of the
 packer-virt-sysprep scripts.
 
+---
+
 The ```provisioners``` section is a *little* more involved, but breaking
 it down into it's constituent parts makes it easily understandable.
-
----
 
 The first shell provisioner creates the vagrant user and sets up sudoers.
 All fairly standard stuff and nothing really to do with
@@ -353,7 +355,9 @@ libguestfs is not available natively on every platform. However...
 If you're using Packer then you are undoubtedly aware of (and probably
 using) [Vagrant](https://www.vagrantup.com/). It's trivially easy to grab
 a box and then install the libguestfs tools we need. libguestfs tools is
-available on both Debian and CentOS.
+available on both Debian and CentOS. Note that there are a few limitations
+with the libguestfs package on CentOS that are not present in the Debian
+package. **As such I would recommend using Debian for your testing**.
 
 ---
 
@@ -363,8 +367,8 @@ Create a working directory for the box; initialise, start, and then ssh
 into the box.
 
 ```
-$ mkdir bento-debian
-$ cd bento-debian
+$ mkdir ~/bento-debian
+$ cd ~/bento-debian
 $ vagrant init bento/debian-8.6
 $ vagrant ssh
 ```
@@ -387,8 +391,8 @@ Create a working directory for the box; initialise, start, and then ssh
 into the box.
 
 ```
-$ mkdir bento-centos
-$ cd bento-centos
+$ mkdir ~/bento-centos
+$ cd ~/bento-centos
 $ vagrant init bento/centos-7.2
 $ vagrant ssh
 ```
@@ -407,8 +411,9 @@ That's it.
 
 If you've deleted the ```virtualbox-iso``` builder from the example
 template and are instead using the ```vmware-iso``` builder, the good news
-is that there is nothing to do here - the vmdk file produced by the
-```vmware-iso``` builder is good to go.
+is that there is nothing to do here.
+Long and short - vmdk files produced by the ```vmware-iso``` builder are
+good to go.
 
 However, if you've stuck with the ```virtualbox-iso``` builder you will
 first need to convert the exported vmdk file into a format that Guestfish
@@ -436,7 +441,7 @@ original vmdk but, importantly for us, will be usable with Guestfish.
 
 #### Inspecting the VMDK with Guestfish
 
-First step is to copy the vmdk file so that it is accessible within the
+The first step is to copy the vmdk file so that it is accessible within the
 Vagrant box. Simply copying the vmdk file to the root of Vagrants working
 directory should be all that's needed - the vmdk will then be visible
 under the ```/vagrant``` directory within the guest.
@@ -444,6 +449,15 @@ under the ```/vagrant``` directory within the guest.
 Next step is to change to the Vagrant boxes working directory and ssh into
 the box. From there change to the ```/vagrant``` directory. The vmdk file
 should be there.
+
+Using the Debian Vagrant box example above:
+
+```
+$ cp centos-guestfish.vmdk ~/bento-debian/
+$ cd ~/bento-debian
+$ vagrant ssh
+$ cd /vagrant
+```
 
 We can finally start guestfish and take a look at the contents of the
 vmdk. The preparations or start up procedure for Guestfish are slightly
@@ -455,7 +469,6 @@ CentOS.
 First Debian:
 
 ```
-$ cd /vagrant
 $ guestfish
 ```
 
@@ -481,7 +494,6 @@ that is should use qemu without going through libvirt...
 
 
 ```
-$ cd /vagrant
 $ export LIBGUESTFS_BACKEND=direct
 $ guestfish
 ```
@@ -523,9 +535,9 @@ directory under /
 While some what limited when compared to the usual suite of tools
 available from a normal shell, Guestfish helpfully provides similes of
 some of the most useful shell commands. Assuming
-the ```sysprep-op-ssh-hostkeys```
-variable was set to ```true``` in the Packer template, we should see that
-the host keys under ```/etc/ssh``` have indeed been removed:
+the ```sysprep-op-ssh-hostkeys``` variable was set to ```true``` in the
+Packer template, we should see that the host keys under ```/etc/ssh```
+have indeed been removed:
 
 ```
 >fs<> ls /etc/ssh
