@@ -16,10 +16,10 @@ starting point and go from there.
 
 ---
 
-## Operations
+## Packer-Virt-Sysprep Operations
 
 - sysprep-op-bash-history: Delete bash history for root and users under /home
-- sysprep-op-crash-date: Delete any crash data created by kexec-tools
+- sysprep-op-crash-data: Delete any crash data created by kexec-tools
 - sysprep-op-dhcp-client-state: Delete any DHCP lease information
 - sysprep-op-firewall-rules: Delete custom rules and firewall customisations
 - sysprep-op-logfiles: Ensures the resultant image is devoid of log files
