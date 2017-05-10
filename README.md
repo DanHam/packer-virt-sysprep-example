@@ -18,12 +18,13 @@ starting point and go from there.
 
 ## Packer-Virt-Sysprep Operations
 
-- sysprep-op-bash-history: Delete bash history for root and users under /home
+- sysprep-op-bash-history: Delete bash history for root and all users under
+  /home
 - sysprep-op-crash-data: Delete any crash data created by kexec-tools
 - sysprep-op-dhcp-client-state: Delete any DHCP lease information
 - sysprep-op-firewall-rules: Delete custom rules and firewall customisations
 - sysprep-op-logfiles: Ensures the resultant image is devoid of log files
-- sysprep-op-machine-id: Deletes the machine-id. This ensure a unique id is
+- sysprep-op-machine-id: Deletes the machine-id. This ensures a unique id is
   created the next time the machine is booted.
 - sysprep-op-mail-spool: Removes any mail from the local spool
 - sysprep-op-package-manager-cache: Removes cache files associated with the
@@ -105,7 +106,7 @@ Each script or *[virt-sysprep](http://libguestfs.org/virt-sysprep.1.html)
 style operation* can be used individually or in conjuction with any or all
 of the other operations.
 
-The example below will run the operations to ensure each machine created
+The example below will run the operations that ensure each machine created
 from the generated image will have a unique machine-id and host ssh keys.
 Be warned that you may need to change the "execute_command" to fit with
 how you do things in your build e.g. run with sudo. Additionally, note
