@@ -7,6 +7,19 @@
 # exported as an environment variable that this script uses to determine
 # if each operation below should be executed
 
+# By default all the scripts are enabled
+SYSPREP_OP_BASH_HISTORY          = ${SYSPREP_OP_BASH_HISTORY:-true}
+SYSPREP_OP_CRASH_DATA            = ${SYSPREP_OP_CRASH_DATA:-true}
+SYSPREP_OP_DHCP_CLIENT_STATE     = ${SYSPREP_OP_DHCP_CLIENT_STATE:-true}
+SYSPREP_OP_FIREWALL_RULES        = ${SYSPREP_OP_FIREWALL_RULES:-true}
+SYSPREP_OP_LOGFILES              = ${SYSPREP_OP_LOGFILES:-true}
+SYSPREP_OP_MACHINE_ID            = ${SYSPREP_OP_MACHINE_ID:-true}
+SYSPREP_OP_MAIL_SPOOL            = ${SYSPREP_OP_MAIL_SPOOL:-true}
+SYSPREP_OP_PACKAGE_MANAGER_CACHE = ${SYSPREP_OP_PACKAGE_MANAGER_CACHE:-true}
+SYSPREP_OP_RPM_DB                = ${SYSPREP_OP_RPM_DB:-true}
+SYSPREP_OP_SSH_HOSTKEYS          = ${SYSPREP_OP_SSH_HOSTKEYS:-true}
+SYSPREP_OP_TMP_FILES             = ${SYSPREP_OP_TMP_FILES:-true}
+SYSPREP_OP_YUM_UUID              = ${SYSPREP_OP_YUM_UUID:-true}
 
 # Packer logging
 echo "Running the packer-virt-sysprep control script..."
